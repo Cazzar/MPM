@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
 
-public class PermissionsPlayer extends java.io.{
+public class PermissionsPlayer {
 
 	EntityPlayer player;
 	String username;
