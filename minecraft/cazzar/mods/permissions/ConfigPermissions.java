@@ -88,8 +88,9 @@ public class ConfigPermissions {
                         String data = event.asCharacters().getData();
                         String[] perms = data.split(",");
                         for (String perm : perms)
-                            if (!perm.trim().isEmpty()){
-                                Permissions.instance.logger.log(Level.INFO, perm + " " + perms.length);
+                            if (!perm.trim().isEmpty()) {
+                                Permissions.instance.logger.log(Level.INFO,
+                                        perm + " " + perms.length);
                                 group.addPermission(perm);
                             }
                         continue;
@@ -191,8 +192,8 @@ public class ConfigPermissions {
 
         return true;
     }
-    
-    public static boolean loadDefaultGroups(){
+
+    public static boolean loadDefaultGroups() {
         return false;
     }
 }
