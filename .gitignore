@@ -1,11 +1,21 @@
-*.class
+#skips all files
+*
+#apart from needed files
+#github
+!.gitignore
+!README.md
 
-# Package Files #
-*.jar
-*.war
-*.ear
-
-/minecraft/*
-!/minecraft/cazzar/
-!/minecraft/mcmod.info
-
+#source code
+!src
+!src/minecraft
+!src/minecraft/cazzar
+!src/minecraft/cazzar/*
+!src/minecraft/cazzar/*/*
+!src/minecraft/cazzar/*/*/*
+!src/minecraft/cazzar/*/*/*/*
+!src/minecraft/cazzar/*/*/*/*/*
+!src/minecraft/cazzar/*/*/*/*/*/*
+!src/minecraft/cazzar/*/*/*/*/*/*/*
+!src/minecraft/cazzar/*/*/*/*/*/*/*/*
+!src/minecraft/cazzar/*/*/*/*/*/*/*/*/*
+!src/minecraft/cazzar/*/*/*/*/*/*/*/*/*/*
