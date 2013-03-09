@@ -27,11 +27,8 @@ public class Permissions {
 	public static Logger logger;
 	public Configuration config;
 
-	private static File configDirectory;
-
-	ArrayList<PermissionsGroup> groups = new ArrayList<PermissionsGroup>();
-	ArrayList<PermissionsPlayer> players = new ArrayList<PermissionsPlayer>();
-	ArrayList<ICommand> supportedPermissionCommands = new ArrayList<ICommand>();
+	private File configDirectory;
+	private PermissionsParser permissionsParser;
 
 	@PreInit
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -39,9 +36,13 @@ public class Permissions {
 		logger.setParent(FMLLog.getLogger());
 		
 		configDirectory = new File(evt.getModConfigurationDirectory(), "MPM");
-		config = new Configuration(new File(configDirectory, "permissions.conf"));
+		config = new Configuration(new File(configDirectory, "config.conf"));
 		config.load();
 		config.save();
+		
+		permissionsParser = new PermissionsParser();
+		permissionsParser.parseGroups();
+		permissionsParser.saveGroups();
 
 		MinecraftForge.EVENT_BUS.register(new PlayerEvents());
 		GameRegistry.registerPlayerTracker(new PlayerJoinHandler());
@@ -52,5 +53,12 @@ public class Permissions {
 		
 	}
 	
+	public static File getConfigDirectory(){
+		return instance.configDirectory;
+	}
+	
+	public static PermissionsParser getPermissionsParser(){
+		return instance.permissionsParser;
+	}
 	
 }

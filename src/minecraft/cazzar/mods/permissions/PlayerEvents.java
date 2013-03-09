@@ -37,7 +37,7 @@ public class PlayerEvents {
         }
 
         // pl.addPermission(permissionNode);
-        PlayerPermissions.saveGroups();
+//        PlayerPermissions.saveGroups();
         if (pl.has(permissionNode)) {
             evt.setResult(Result.ALLOW);
             evt.command.processCommand(evt.sender, evt.parameters);

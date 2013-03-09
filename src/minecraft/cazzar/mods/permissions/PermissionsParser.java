@@ -1,108 +1,85 @@
 package cazzar.mods.permissions;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.logging.Level;
+import static argo.jdom.JsonNodeFactories.array;
+import static argo.jdom.JsonNodeFactories.field;
+import static argo.jdom.JsonNodeFactories.object;
+import static argo.jdom.JsonNodeFactories.string;
 
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import argo.format.JsonFormatter;
+import argo.format.PrettyJsonFormatter;
+import argo.jdom.JdomParser;
+import argo.jdom.JsonNode;
+import argo.jdom.JsonRootNode;
+import argo.jdom.JsonStringNode;
+import argo.saj.SajParser;
 
 public class PermissionsParser {
+	private static final JsonFormatter JSON_FORMATTER = new PrettyJsonFormatter();
+	private static final JdomParser JDOM_PARSER = new JdomParser();
+	private static final SajParser SAJ_PARSER = new SajParser();
 
-	static final String GROUP = "group";
-	static final String ID = "ID";
-	static final String NAME = "name";
-	static final String CHATFORMAT = "chatFormat";
-	static final String PERMISSIONS = "permissions";
-	static final String INHERITED = "inheritedGroups";
+	public boolean parseGroups() {
+		try {
+			FileReader fr = new FileReader(new File(
+					Permissions.getConfigDirectory(), "groups.json"));
+			JsonRootNode json = JDOM_PARSER.parse(fr);
+			HashMap<String, JsonNode> fields = new HashMap<String, JsonNode>();
+			HashMap<String, PermissionsGroup> groups = new HashMap<String, PermissionsGroup>();
+			
+			for (JsonNode n : json.getFields().keySet())
+				if(json.isObjectNode(n.getText()))
+					groups.put(n.getText(), parseGroup(n.getText(), json.getRootNode(n.getText())));
+				else
+					fields.put(n.getText(), n);
+			System.out.println("Groups: "+groups.size()+" Fields: "+fields.size());
+			fr.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	private PermissionsGroup parseGroup(String groupID, JsonRootNode jsonRootNode){
+		PermissionsGroup group = new PermissionsGroup(groupID, jsonRootNode.getStringValue("name"));
+		if(jsonRootNode.isStringValue("prefix"))
+			group.setPrefix(jsonRootNode.getStringValue("prefix"));
+		if(jsonRootNode.isArrayNode("permissions"))
+			for(JsonNode n : jsonRootNode.getArrayNode("permissions"))
+				group.addPermission(n.getText());
+		if(jsonRootNode.isArrayNode("revokedPermissions"))
+			for(JsonNode n : jsonRootNode.getArrayNode("revokedPermissions"))
+				group.addRevokedPermission(n.getText());
+		return group;
+	}
 
-	static Permissions perms = Permissions.instance;
-
-	public static boolean parsePermissions() {
-		try{
-			InputStream in = new FileInputStream(perms.modConfigDirectory
-					+ "/permissions.xml");
-		}catch(Exception e){
+	public boolean saveGroups() {
+		try {
+			JsonRootNode json = object(
+					field("default", string("GuestGroup")),
+					field("GuestGroup",
+							object(field("name", string("Guest")),
+									field("prefix", string("[Guest]")),
+									field("permissions",
+											array(string("mpm.world.placeblocks"), string("mpm.world.placeblocks2"))))));
+			FileWriter fw = new FileWriter(new File(
+					Permissions.getConfigDirectory(), "groups.json"));
+			JSON_FORMATTER.format(json, fw);
+			
+			
+			fw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
 
-	public static boolean saveGroups() {
-		try {
-			File f = new File(perms.modConfigDirectory + "/permissions.xml");
-			if (!f.exists()) {
-				f.createNewFile();
-			}
-			FileOutputStream out = new FileOutputStream(f);
-			XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-
-			XMLStreamWriter xmlStream = outputFactory
-					.createXMLStreamWriter(out);
-
-			xmlStream.writeStartDocument();
-			xmlStream.writeCharacters("\n");
-			xmlStream.writeStartElement(PERMISSIONS);
-			xmlStream.writeCharacters("\n\t");
-			for (PermissionsGroup group : perms.groups) {
-				xmlStream.writeStartElement(GROUP);
-				xmlStream.writeAttribute(ID, String.valueOf(group.getID()));
-				xmlStream.writeCharacters("\n\t\t");
-				xmlStream.writeStartElement(NAME);
-				xmlStream.writeCharacters(group.getName());
-				xmlStream.writeEndElement();
-				xmlStream.writeCharacters("\n\t\t");
-				xmlStream.writeStartElement(CHATFORMAT);
-				xmlStream.writeCharacters(group.getChatFormat());
-				xmlStream.writeEndElement();
-				xmlStream.writeCharacters("\n\t\t");
-				xmlStream.writeStartElement(PERMISSIONS);
-				xmlStream.writeCharacters(group
-						.getPermissionsAsDelimitedString(","));
-				xmlStream.writeEndElement();
-				xmlStream.writeCharacters("\n\t\t");
-				xmlStream.writeStartElement(INHERITED);
-				xmlStream.writeCharacters(group
-						.getInheritedGroupsAsDelimitedString(","));
-				xmlStream.writeEndElement();
-				xmlStream.writeCharacters("\n\t");
-				xmlStream.writeEndElement();
-			}
-			xmlStream.writeCharacters("\n");
-			xmlStream.writeEndElement();
-			xmlStream.writeCharacters("\n");
-			xmlStream.writeEndDocument();
-
-			xmlStream.flush();
-			xmlStream.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return true;
-	}
-
-	public static boolean loadDefaultGroups() {
-		return false;
-	}
 }
