@@ -19,12 +19,12 @@ public class PermissionsPlayer {
         this.username = getUsername();
         this.permissionNodes = new ArrayList<String>();
         this.secondaryGroups = new ArrayList<PermissionsGroup>();
-        if (PermissionsGroup.getGroupByID(0) == null) {
+        /*if (PermissionsGroup.getGroupByID(0) == null) {
             primaryGroup = new PermissionsGroup("Guest");
         } else {
             primaryGroup = PermissionsGroup.getGroupByID(0);
         }
-        perms.players.add(this);
+        perms.players.add(this);*/
     }
 
     public PermissionsPlayer() {
@@ -46,10 +46,10 @@ public class PermissionsPlayer {
      * Can return null if the player is not found.
      */
     public static PermissionsPlayer findPlayer(String name) {
-        for (PermissionsPlayer player : Permissions.instance.players) {
-            if (player.username.equalsIgnoreCase(name))
-                return player;
-        }
+        //for (PermissionsPlayer player : Permissions.instance.players) {
+        //    if (player.username.equalsIgnoreCase(name))
+        //        return player;
+        //}
 
         return null;
     }
@@ -63,11 +63,11 @@ public class PermissionsPlayer {
     }
 
     public void addGroup(Integer gID) {
-        if (this.primaryGroup == null) {
+        /*if (this.primaryGroup == null) {
             this.primaryGroup = PermissionsGroup.getGroupByID(gID);
         } else {
             this.secondaryGroups.add(PermissionsGroup.getGroupByID(gID));
-        }
+        }*/
     }
 
     public String getPermissionsAsDelimitedString(String delim) {
@@ -85,13 +85,13 @@ public class PermissionsPlayer {
 
     public String getGroupsAsDelimitedString(String delim) {
         StringBuffer buffer = new StringBuffer();
-        buffer.append(primaryGroup.ID);
+        buffer.append(primaryGroup.getGroupId());
         if (secondaryGroups.size() == 0)
             return buffer.toString();
         buffer.append(delim);
         int i = 1; // there is probably a better way to do this.
         for (PermissionsGroup perm : secondaryGroups) {
-            buffer.append(perm.ID);
+            buffer.append(perm.getGroupId());
             i++;
             if (secondaryGroups.size() != i)
                 buffer.append(delim);
@@ -112,13 +112,13 @@ public class PermissionsPlayer {
             return false;
 
         // TODO:Make it search down the herachy
-        if (primaryGroup.has(permission))
+        if (primaryGroup.hasPermission(permission))
             return true;
         // very hackish but it will do :)
-        else if (primaryGroup.has("-" + permission))
+        else if (primaryGroup.hasPermissionRevoked(permission))
             return false;
         for (PermissionsGroup i : secondaryGroups) {
-            return i.has(permission);
+            return i.hasPermission(permission);
         }
         return false;
     }

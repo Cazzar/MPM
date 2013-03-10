@@ -31,10 +31,10 @@ public class PlayerEvents {
             pl = new PermissionsPlayer((EntityPlayer) evt.sender);
         }
         String permissionNode = "!/" + evt.command.getCommandName();
-        if (perms.supportedPermissionCommands.contains(evt.command)) {
-            return; // will be handled with the command itself. does not have to
-                    // be handled with this plugin
-        }
+        //if (perms.supportedPermissionCommands.contains(evt.command)) {
+        //    return; // will be handled with the command itself. does not have to
+         //           // be handled with this plugin
+        //}
 
         // pl.addPermission(permissionNode);
 //        PlayerPermissions.saveGroups();

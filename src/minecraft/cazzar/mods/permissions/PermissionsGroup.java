@@ -72,4 +72,11 @@ public class PermissionsGroup {
 		revokedPermissions.remove(perm);
 	}
 	
+	public boolean hasPermission(String perm){
+		return true; //just to fix the build issues for now.		
+	}
+	
+	public boolean hasPermissionRevoked(String perm){
+		return false; //just to fix the build issues for now.		
+	}
 }
