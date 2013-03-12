@@ -4,6 +4,8 @@
 #github
 !.gitignore
 !README.md
+!build.xml
+!src/version.properties
 
 #source code
 !src
