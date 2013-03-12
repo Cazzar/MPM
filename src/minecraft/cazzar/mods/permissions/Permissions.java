@@ -22,8 +22,8 @@ import cpw.mods.fml.server.FMLServerHandler;
 
 @Mod(modid = Permissions.ID, version = Permissions.VERSION, name = Permissions.ID)
 public class Permissions {
-	public static final String ID = "Permissions";
-	public static final String VERSION = "0.1a";
+	public static final String ID = "MPM";
+	public static final String VERSION = "1.0alpha";
 
 	@Instance(ID)
 	public static Permissions instance;
@@ -42,7 +42,7 @@ public class Permissions {
 		logger = Logger.getLogger(ID);
 		logger.setParent(FMLLog.getLogger());
 		
-		configDirectory = new File(evt.getModConfigurationDirectory(), "MPM");
+		configDirectory = new File(evt.getModConfigurationDirectory(), ID);
 		config = new Configuration(new File(configDirectory, "config.conf"));
 		config.load();
 		
