@@ -1,6 +1,7 @@
 package cazzar.mods.permissions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PermissionsGroup {
 	private String groupId;
@@ -10,6 +11,7 @@ public class PermissionsGroup {
 	private String parent;
 	private boolean hasParent;
 	private ArrayList<String> permissions, revokedPermissions;
+	private static HashMap<String, PermissionsGroup> groups;
 	
 	public PermissionsGroup(String groupId, String groupName){
 		this.groupId = groupId;
@@ -73,10 +75,73 @@ public class PermissionsGroup {
 	}
 	
 	public boolean hasPermission(String perm){
-		return true; //just to fix the build issues for now.		
+		return revokedPermissions.contains(perm);		
 	}
 	
 	public boolean hasPermissionRevoked(String perm){
-		return false; //just to fix the build issues for now.		
+		return revokedPermissions.contains(perm);		
+	}
+	
+	public void addGroup(){
+		if (groups == null){
+			groups = new HashMap<String, PermissionsGroup>();
+		}
+		groups.put(groupId, this);
+	}
+	
+	public void setParent(String groupId) throws Exception{
+		if (!groups.containsKey(groupId)){
+			throw new Exception("The group has to be added first");
+		}
+		this.parent = groupId;
+		this.hasParent = true;
+	}
+	
+	public String getParent(){
+		return parent;
+	}
+	
+	public Boolean hasParent(){
+		return hasParent;
+	}
+	
+	/**
+	 *@param perm The permission node 
+	 */
+	public boolean has(String perm){
+		if (hasPermission(perm)){
+			return true;
+		}
+		else if (hasPermissionRevoked(perm)){
+			return false;
+		}
+		
+		String nextGroup = getGroupId();
+		PermissionsGroup group = PermissionsGroup.getGroups().get(nextGroup);
+		Boolean hasNextGroup = true;
+		
+		while (hasNextGroup) {
+			
+			if (group.hasPermission(perm)){
+				return true;
+			}
+			else if (group.hasPermissionRevoked(perm)){
+				return false;
+			}
+			
+			if (!group.hasParent()){
+				hasNextGroup = false;
+				break;
+			}
+			
+			nextGroup = group.getGroupId();
+			group = PermissionsGroup.getGroups().get(nextGroup);
+		}
+		
+		return false;
+	}
+	
+	public static HashMap<String, PermissionsGroup> getGroups(){
+		return groups;
 	}
 }

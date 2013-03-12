@@ -7,32 +7,20 @@ public class PlayerJoinHandler implements IPlayerTracker {
 
     @Override
     public void onPlayerLogin(EntityPlayer player) {
-        // TODO Auto-generated method stub
-        PermissionsPlayer tmp;
-        if (PermissionsPlayer.findPlayer(player.username) == null) {
-            tmp = new PermissionsPlayer(player);
-            tmp.addPermission("!/time");
-            tmp.addPermission("!/help");
-        }
-
+    	if (!PermissionsPlayer.getPlayers().containsKey(player.username)){
+    		PermissionsPlayer pl = new PermissionsPlayer(player.username, player);
+    		pl.setGroup(Permissions.instance.getDefaultGroup());
+    		pl.addPlayer();
+    	}
     }
 
     @Override
     public void onPlayerLogout(EntityPlayer player) {
-        // TODO Auto-generated method stub
-
     }
-
     @Override
     public void onPlayerChangedDimension(EntityPlayer player) {
-        // TODO Auto-generated method stub
-
     }
-
     @Override
     public void onPlayerRespawn(EntityPlayer player) {
-        // TODO Auto-generated method stub
-
     }
-
 }

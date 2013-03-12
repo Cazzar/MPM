@@ -29,6 +29,9 @@ public class Permissions {
 
 	private File configDirectory;
 	private PermissionsParser permissionsParser;
+	private String chatFormat;
+	private String defaultGroupId;
+	private Boolean permissionsForVanilla;
 
 	@PreInit
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -37,6 +40,17 @@ public class Permissions {
 		
 		configDirectory = new File(evt.getModConfigurationDirectory(), "MPM");
 		config = new Configuration(new File(configDirectory, "config.conf"));
+		chatFormat = config.get("general", "chatFormat", "%p% %gp% %n%: %m%", "The format for the chat\n" +
+														 "%p%: The player's prefix\n" +
+														 "%gp%: The player's group prefix\n" +
+														 "%n%: the player's name\n" +
+														 "%m%: The player's sent message").value;
+		
+		permissionsForVanilla = config.get("general", "permissionsForVanilla", 
+				true, "Should we add permissions to the vanilla commands?\n" +
+					  "If true: permissions of vanilla.command are added for each command\n" +
+					  "If false: No permissions are added, OP needed for OP commands.").getBoolean(true);
+		
 		config.load();
 		config.save();
 		
@@ -61,4 +75,15 @@ public class Permissions {
 		return instance.permissionsParser;
 	}
 	
+	public String getDefaultGroup(){
+		return defaultGroupId;
+	}
+	
+	public void setDefaultGroup(String defaultGroupId){
+		this.defaultGroupId = defaultGroupId;
+	}
+	
+	public Boolean getPermissionsForVanilla(){
+		return permissionsForVanilla;
+	}
 }

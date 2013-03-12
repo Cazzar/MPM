@@ -1,125 +1,147 @@
 package cazzar.mods.permissions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.minecraft.entity.player.EntityPlayer;
 
 public class PermissionsPlayer {
 
-    EntityPlayer player;
-    String username;
-    PermissionsGroup primaryGroup;
-    ArrayList<PermissionsGroup> secondaryGroups;
-    ArrayList<String> permissionNodes;
+	private String playerId;
+	private EntityPlayer player;
+	private String prefix;
+	private boolean hasPrefix, hasGroup;
+	private String groupId;
+	private ArrayList<String> permissions, revokedPermissions;
+	private static HashMap<String, PermissionsPlayer> players;
+	
+	public PermissionsPlayer(String playerId, EntityPlayer player){
+		this.playerId = playerId;
+		this.player = player;
+		hasPrefix = false;
+		permissions = new ArrayList<String>();
+		revokedPermissions = new ArrayList<String>();
+	}
+	
+	public String getPlayerId(){
+		return playerId;
+	}
+	
+	public EntityPlayer getPlayer(){
+		return player;
+	}
+	
+	public void setPrefix(String prefix){
+		this.prefix = prefix;
+		hasPrefix = true;
+	}
+	
+	public String getPrefix(){
+		return prefix;
+	}
+	
+	public boolean hasPrefix(){
+		return hasPrefix;
+	}
+	
+	public void setGroup(String groupId){
+		this.groupId = groupId;
+		hasGroup = true;
+	}
+	
+	public String getGroupId(){
+		return groupId;
+	}
+	
+	public boolean hasGroup(){
+		return hasGroup;
+	}
+	
+	public void setPermissions(ArrayList<String> permissions){
+		this.permissions = permissions;
+	}
+	
+	public ArrayList<String> getPermissions(){
+		return permissions;
+	}
+	
+	public void addPermission(String perm){
+		permissions.add(perm);
+	}
+	
+	public void removePermission(String perm){
+		permissions.remove(perm);
+	}
+	
+	public void setRevokedPermissions(ArrayList<String> revokedPermissions){
+		this.revokedPermissions = revokedPermissions;
+	}
+	
+	public ArrayList<String> getRevokedPermissions(){
+		return revokedPermissions;
+	}
+	
+	public void addRevokedPermission(String perm){
+		revokedPermissions.add(perm);
+	}
+	
+	public void removeRevokedPermissions(String perm){
+		revokedPermissions.remove(perm);
+	}
+	
+	public boolean hasPermission(String perm){
+		return revokedPermissions.contains(perm);		
+	}
+	
+	public boolean hasPermissionRevoked(String perm){
+		return revokedPermissions.contains(perm);		
+	}
+	
+	public void addPlayer(){
+		if (players == null){
+			players = new HashMap<String, PermissionsPlayer>();
+		}
+		players.put(playerId, this);
+	}
+	
+	/**
+	 *@param perm The permission node 
+	 */
+	public boolean has(String perm){
+		if (hasPermission(perm)){
+			return true;
+		}
+		else if (hasPermissionRevoked(perm)){
+			return false;
+		}
+		
+		String nextGroup = getGroupId();
+		PermissionsGroup group = PermissionsGroup.getGroups().get(nextGroup);
+		Boolean hasNextGroup = true;
+		
+		while (hasNextGroup) {
+			
+			if (group.hasPermission(perm)){
+				return true;
+			}
+			else if (group.hasPermissionRevoked(perm)){
+				return false;
+			}
+			
+			if (!group.hasParent()){
+				hasNextGroup = false;
+				break;
+			}
+			
+			nextGroup = group.getGroupId();
+			group = PermissionsGroup.getGroups().get(nextGroup);
+		}
+		
+		return false;
+	}
 
-    private Permissions perms = Permissions.instance;
-
-    public PermissionsPlayer(EntityPlayer player) {
-        this.player = player;
-        this.username = getUsername();
-        this.permissionNodes = new ArrayList<String>();
-        this.secondaryGroups = new ArrayList<PermissionsGroup>();
-        /*if (PermissionsGroup.getGroupByID(0) == null) {
-            primaryGroup = new PermissionsGroup("Guest");
-        } else {
-            primaryGroup = PermissionsGroup.getGroupByID(0);
-        }
-        perms.players.add(this);*/
-    }
-
-    public PermissionsPlayer() {
-    }
-
-    public String getUsername() {
-        if (player != null)
-            return player.username;
-        return username;
-    }
-
-    public void setUsername(String newUsername) throws Exception {
-        if (this.username == null)
-            throw new Exception("Username not null");
-        this.username = newUsername;
-    }
-
-    /*
-     * Can return null if the player is not found.
-     */
-    public static PermissionsPlayer findPlayer(String name) {
-        //for (PermissionsPlayer player : Permissions.instance.players) {
-        //    if (player.username.equalsIgnoreCase(name))
-        //        return player;
-        //}
-
-        return null;
-    }
-
-    public void setChatFormat(String data) {
-        // TODO: Add chat formats
-    }
-
-    public void addPermission(String perm) {
-        permissionNodes.add(perm);
-    }
-
-    public void addGroup(Integer gID) {
-        /*if (this.primaryGroup == null) {
-            this.primaryGroup = PermissionsGroup.getGroupByID(gID);
-        } else {
-            this.secondaryGroups.add(PermissionsGroup.getGroupByID(gID));
-        }*/
-    }
-
-    public String getPermissionsAsDelimitedString(String delim) {
-        StringBuffer buffer = new StringBuffer();
-        int i = 1; // there is probably a better way to do this.
-        for (String perm : permissionNodes) {
-            buffer.append(perm);
-            i++;
-            if (permissionNodes.size() != i)
-                buffer.append(delim);
-        }
-
-        return buffer.toString();
-    }
-
-    public String getGroupsAsDelimitedString(String delim) {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(primaryGroup.getGroupId());
-        if (secondaryGroups.size() == 0)
-            return buffer.toString();
-        buffer.append(delim);
-        int i = 1; // there is probably a better way to do this.
-        for (PermissionsGroup perm : secondaryGroups) {
-            buffer.append(perm.getGroupId());
-            i++;
-            if (secondaryGroups.size() != i)
-                buffer.append(delim);
-        }
-
-        return buffer.toString();
-    }
-
-    public boolean has(String permission) {
-        if (permission == null)
-            return true;
-        else if (permission.equals(""))
-            return true;
-        if (permissionNodes.contains(permission))
-            return true;
-        else if (permissionNodes.contains("-" + permission))
-            // make the ability to deny permissions
-            return false;
-
-        // TODO:Make it search down the herachy
-        if (primaryGroup.hasPermission(permission))
-            return true;
-        // very hackish but it will do :)
-        else if (primaryGroup.hasPermissionRevoked(permission))
-            return false;
-        for (PermissionsGroup i : secondaryGroups) {
-            return i.hasPermission(permission);
-        }
-        return false;
-    }
+	
+	public static HashMap<String, PermissionsPlayer> getPlayers(){
+		return players;
+	}
 }
