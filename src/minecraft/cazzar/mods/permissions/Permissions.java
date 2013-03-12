@@ -61,6 +61,7 @@ public class Permissions {
 		
 		permissionsParser = new PermissionsParser();
 		permissionsParser.parseGroups();
+		permissionsParser.parsePlayers();
 		permissionsParser.saveGroups();
 		
 

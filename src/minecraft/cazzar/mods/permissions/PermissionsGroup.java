@@ -39,6 +39,9 @@ public class PermissionsGroup {
 	}
 	
 	public boolean hasPrefix(){
+		if (prefix != null){
+			hasPrefix = !prefix.isEmpty();
+		}
 		return hasPrefix;
 	}
 	

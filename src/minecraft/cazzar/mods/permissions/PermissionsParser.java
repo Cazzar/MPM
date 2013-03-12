@@ -185,8 +185,8 @@ public class PermissionsParser {
 	
 	private JsonRootNode makePlayerNodes(){
 		JsonObjectNodeBuilder builder = JsonNodeBuilders.anObjectBuilder();
-		builder.withField("default", JsonNodeBuilders.aStringBuilder(
-											Permissions.instance.getDefaultGroup()));
+		//builder.withField("default", JsonNodeBuilders.aStringBuilder(
+		//									Permissions.instance.getDefaultGroup()));
 		
 		for (PermissionsPlayer pl : PermissionsPlayer.getPlayers().values()) {
 			JsonArrayNodeBuilder permissions = JsonNodeBuilders.anArrayBuilder();
@@ -200,10 +200,10 @@ public class PermissionsParser {
 				revokedPermissions.withElement(JsonNodeBuilders.aStringBuilder(perm));
 			}
 			JsonObjectNodeBuilder plBuilder = JsonNodeBuilders.anObjectBuilder()
-					.withField("prefix", JsonNodeBuilders.aStringBuilder(pl.getPrefix()))
+					.withField("prefix", JsonNodeBuilders.aStringBuilder((pl.hasPrefix() ? pl.getPrefix() : "")))
 					.withField("permissions", permissions)
 					.withField("revokedPermissions", revokedPermissions);
-			builder.withField(pl.getGroupId(), plBuilder);
+			builder.withField(pl.getPlayerId(), plBuilder);
 		}
 		return builder.build();
 	}
