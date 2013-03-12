@@ -23,12 +23,24 @@ public class PermissionsPlayer {
 		revokedPermissions = new ArrayList<String>();
 	}
 	
+	public PermissionsPlayer(String playerId){
+		this.playerId = playerId;
+		this.player = null;
+		hasPrefix = false;
+		permissions = new ArrayList<String>();
+		revokedPermissions = new ArrayList<String>();
+	}
+	
 	public String getPlayerId(){
 		return playerId;
 	}
 	
 	public EntityPlayer getPlayer(){
 		return player;
+	}
+	
+	public void setPlayer(EntityPlayer player){
+		this.player = player;
 	}
 	
 	public void setPrefix(String prefix){
@@ -146,5 +158,9 @@ public class PermissionsPlayer {
 			players = new HashMap<String, PermissionsPlayer>();
 		}
 		return players;
+	}
+
+	public static void setPermissionPlayers(HashMap<String, PermissionsPlayer> players) {
+		PermissionsPlayer.players = players;		
 	}
 }

@@ -12,8 +12,11 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.ServerStopping;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.server.FMLServerHandler;
 
@@ -46,7 +49,8 @@ public class Permissions {
 		chatFormat = config.get("general", "chatFormat", "%p% %gp% %n%:", "The format for the chat\n" +
 														 "%p%: The player's prefix\n" +
 														 "%gp%: The player's group prefix\n" +
-														 "%n%: the player's name").value.trim();
+														 "%n%: The player's name\n" +
+														 "%m%: The sent message").value.trim();
 		permissionsForVanilla = config.get("general", "permissionsForVanilla", 
 				true, "Should we add permissions to the vanilla commands?\n" +
 					  "If true: permissions of vanilla.command are added for each command\n" +
@@ -71,6 +75,11 @@ public class Permissions {
 	@Init
 	public void init(FMLInitializationEvent evt) {
 		
+	}
+	
+	@ServerStopping
+	public void serverStopping(FMLServerStoppingEvent evt) {
+		permissionsParser.savePlayers();
 	}
 	
 	public static File getConfigDirectory(){
@@ -101,7 +110,8 @@ public class Permissions {
 	 * 
 	 * <p><b>%p%:</b> The player's prefix</br>
 	 * <b>%gp%:</b> The player's group prefix</br>
-	 * <b>%n%:</b> the player's name</br>
+	 * <b>%n%:</b> The player's name</br>
+	 * <b>%m%:</b> The sent message
 	 */
 	public String getChatFormat(){
 		return chatFormat;
