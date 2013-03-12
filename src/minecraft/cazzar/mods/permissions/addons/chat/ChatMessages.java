@@ -17,11 +17,11 @@ public class ChatMessages {
 		PermissionsPlayer player = PermissionsPlayer.getPlayers().get(evt.username);
 		PermissionsGroup playerGroup = PermissionsGroup.getGroups().get(player.getGroupId());
 		
-		chatMessage.replace("%p%", (player.hasPrefix()) ? player.getPrefix() : "")
-				   .replace("%gp", (playerGroup.hasPrefix()) ? playerGroup.getPrefix() : "")
-				   .replace("%n%", evt.username)
-				   .replace('&', '\u00A7')//Replace & with section sign
-				   .replace("%m%", evt.message);
+		chatMessage = chatMessage.replace("%p%", (player.hasPrefix()) ? player.getPrefix() : "")
+				   			     .replace("%gp%", (playerGroup.hasPrefix()) ? playerGroup.getPrefix() : "")
+				   			     .replace("%n%", evt.username)
+				   			     .replace('&', '\u00A7')//Replace & with section sign
+				   			     .replace("%m%", evt.message);
         MinecraftServer.getServer().getConfigurationManager().sendChatMsg(chatMessage);
 	}
 }

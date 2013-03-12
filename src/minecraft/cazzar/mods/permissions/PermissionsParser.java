@@ -30,6 +30,7 @@ public class PermissionsParser {
 			FileReader fr = new FileReader(new File(
 					Permissions.getConfigDirectory(), "groups.json"));
 			JsonRootNode json = JDOM_PARSER.parse(fr);
+			Permissions.instance.setDefaultGroup(json.getStringValue("default"));
 			HashMap<String, JsonNode> fields = new HashMap<String, JsonNode>();
 			HashMap<String, PermissionsGroup> groups = new HashMap<String, PermissionsGroup>();
 			
@@ -38,8 +39,12 @@ public class PermissionsParser {
 					groups.put(n.getText(), parseGroup(n.getText(), json.getRootNode(n.getText())));
 				else
 					fields.put(n.getText(), n);
+			
 			System.out.println("Groups: "+groups.size()+" Fields: "+fields.size());
+			System.out.println("Default Group: " + Permissions.instance.getDefaultGroup());
 			fr.close();
+			
+			PermissionsGroup.setPermissionGroups(groups);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

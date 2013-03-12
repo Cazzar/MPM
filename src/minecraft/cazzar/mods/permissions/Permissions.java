@@ -43,11 +43,10 @@ public class Permissions {
 		config = new Configuration(new File(configDirectory, "config.conf"));
 		config.load();
 		
-		chatFormat = config.get("general", "chatFormat", "%p% %gp% %n%: %m%", "The format for the chat\n" +
+		chatFormat = config.get("general", "chatFormat", "%p% %gp% %n%:", "The format for the chat\n" +
 														 "%p%: The player's prefix\n" +
 														 "%gp%: The player's group prefix\n" +
-														 "%n%: the player's name\n" +
-														 "%m%: The player's sent message").value;
+														 "%n%: the player's name").value.trim();
 		permissionsForVanilla = config.get("general", "permissionsForVanilla", 
 				true, "Should we add permissions to the vanilla commands?\n" +
 					  "If true: permissions of vanilla.command are added for each command\n" +
@@ -59,6 +58,7 @@ public class Permissions {
 		permissionsParser = new PermissionsParser();
 		permissionsParser.parseGroups();
 		permissionsParser.saveGroups();
+		
 
 		if (useChatHandler) {
 			MinecraftForge.EVENT_BUS.register(new cazzar.mods.permissions.addons.chat.ChatMessages());
@@ -102,7 +102,6 @@ public class Permissions {
 	 * <p><b>%p%:</b> The player's prefix</br>
 	 * <b>%gp%:</b> The player's group prefix</br>
 	 * <b>%n%:</b> the player's name</br>
-	 * <b>%m%:</b> The player's sent message</p>
 	 */
 	public String getChatFormat(){
 		return chatFormat;
@@ -114,7 +113,6 @@ public class Permissions {
 	 * <b>%p%:</b> The player's prefix</br>
 	 * <b>%gp%:</b> The player's group prefix</br>
 	 * <b>%n%:</b> the player's name</br>
-	 * <b>%m%:</b> The player's sent message
 	 */
 	public void setChatFormat(String chatFormat){
 		this.chatFormat = chatFormat;

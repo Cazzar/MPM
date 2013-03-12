@@ -147,4 +147,8 @@ public class PermissionsGroup {
 		}
 		return groups;
 	}
+	
+	public static void setPermissionGroups(HashMap<String, PermissionsGroup> groups){
+		PermissionsGroup.groups = groups;
+	}
 }
