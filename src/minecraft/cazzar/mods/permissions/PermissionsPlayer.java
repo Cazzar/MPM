@@ -142,6 +142,9 @@ public class PermissionsPlayer {
 
 	
 	public static HashMap<String, PermissionsPlayer> getPlayers(){
+		if (players == null) {
+			players = new HashMap<String, PermissionsPlayer>();
+		}
 		return players;
 	}
 }

@@ -142,6 +142,9 @@ public class PermissionsGroup {
 	}
 	
 	public static HashMap<String, PermissionsGroup> getGroups(){
+		if (groups == null) {
+			groups = new HashMap<String, PermissionsGroup>();
+		}
 		return groups;
 	}
 }

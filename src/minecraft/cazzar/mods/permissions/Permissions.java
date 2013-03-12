@@ -83,7 +83,34 @@ public class Permissions {
 		this.defaultGroupId = defaultGroupId;
 	}
 	
+	/**
+	 * @return Whether or not to generate <i><b>all</b></i> vanilla permission nodes
+	 */
 	public Boolean getPermissionsForVanilla(){
 		return permissionsForVanilla;
+	}
+	
+	/**
+	 * @return The current chat format</br>
+	 * 
+	 * <p><b>%p%:</b> The player's prefix</br>
+	 * <b>%gp%:</b> The player's group prefix</br>
+	 * <b>%n%:</b> the player's name</br>
+	 * <b>%m%:</b> The player's sent message</p>
+	 */
+	public String getChatFormat(){
+		return chatFormat;
+	}
+	
+	/**
+	 * The format for the chat
+	 * @param chatFormat The new Chat format</br>
+	 * <b>%p%:</b> The player's prefix</br>
+	 * <b>%gp%:</b> The player's group prefix</br>
+	 * <b>%n%:</b> the player's name</br>
+	 * <b>%m%:</b> The player's sent message
+	 */
+	public void setChatFormat(String chatFormat){
+		this.chatFormat = chatFormat;
 	}
 }
