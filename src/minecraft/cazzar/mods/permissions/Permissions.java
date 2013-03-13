@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import cazzar.mods.permissions.commands.*;
+
 import net.minecraft.command.ICommand;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
@@ -12,6 +14,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.ServerStarting;
 import cpw.mods.fml.common.Mod.ServerStopping;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -75,7 +78,16 @@ public class Permissions {
 
 	@Init
 	public void init(FMLInitializationEvent evt) {
-		
+	}
+	
+	@ServerStarting
+	public void serverStarting(FMLServerStartingEvent evt) {
+		evt.registerServerCommand(new CommandAddGroup());
+		evt.registerServerCommand(new CommandPermission());
+		evt.registerServerCommand(new CommandReload());
+		evt.registerServerCommand(new CommandSetGroup());
+		evt.registerServerCommand(new CommandSetParent());
+		evt.registerServerCommand(new CommandSetPrefix());
 	}
 	
 	@ServerStopping
@@ -127,5 +139,28 @@ public class Permissions {
 	 */
 	public void setChatFormat(String chatFormat){
 		this.chatFormat = chatFormat;
+	}
+	
+	public void reload(){
+		config = new Configuration(new File(configDirectory, "config.conf"));
+		config.load();
+		
+		chatFormat = config.get("general", "chatFormat", "%p% %gp% %n%:", "The format for the chat\n" +
+														 "%p%: The player's prefix\n" +
+														 "%gp%: The player's group prefix\n" +
+														 "%n%: The player's name\n" +
+														 "%m%: The sent message").value.trim();
+		permissionsForVanilla = config.get("general", "permissionsForVanilla", 
+				true, "Should we add permissions to the vanilla commands?\n" +
+					  "If true: permissions of vanilla.command are added for each command\n" +
+					  "If false: No permissions are added, OP needed for OP commands.").getBoolean(true);
+		useChatHandler = config.get("addons", "enableChatHandler", true, "Enable the chat handler").getBoolean(true);
+		
+		config.save();
+		
+		permissionsParser = new PermissionsParser();
+		permissionsParser.parseGroups();
+		permissionsParser.parsePlayers();
+		permissionsParser.saveGroups();
 	}
 }

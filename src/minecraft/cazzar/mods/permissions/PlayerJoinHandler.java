@@ -10,7 +10,12 @@ public class PlayerJoinHandler implements IPlayerTracker {
     	if (!PermissionsPlayer.getPlayers().containsKey(player.username)){
     		PermissionsPlayer pl = new PermissionsPlayer(player.username, player);
     		pl.setGroup(Permissions.instance.getDefaultGroup());
-    		pl.addPlayer();
+    		try {
+				pl.addPlayer();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	}
     	else {
     		PermissionsPlayer.getPlayers()

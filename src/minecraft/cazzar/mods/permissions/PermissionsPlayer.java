@@ -112,10 +112,11 @@ public class PermissionsPlayer {
 		return revokedPermissions.contains(perm);		
 	}
 	
-	public void addPlayer(){
+	public void addPlayer() throws Exception{
 		if (players == null){
 			players = new HashMap<String, PermissionsPlayer>();
 		}
+		if (players.containsKey(playerId)) throw new Exception("Player with this ID already exists");
 		players.put(playerId, this);
 	}
 	

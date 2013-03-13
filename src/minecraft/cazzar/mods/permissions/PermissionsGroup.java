@@ -85,10 +85,12 @@ public class PermissionsGroup {
 		return revokedPermissions.contains(perm);		
 	}
 	
-	public void addGroup(){
+	public void addGroup() throws Exception{
 		if (groups == null){
 			groups = new HashMap<String, PermissionsGroup>();
 		}
+		if (groups.containsKey(groupId))
+			throw new Exception("Group with this ID already exists");
 		groups.put(groupId, this);
 	}
 	
