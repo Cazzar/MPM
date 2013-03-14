@@ -183,8 +183,6 @@ public class PermissionsParser {
 				player.addRevokedPermission(n.getText());
 		if(jsonRootNode.isStringValue("groupId"))
 			player.setGroup(jsonRootNode.getStringValue("groupId"));
-		if(jsonRootNode.isStringValue("playerId"))
-			player.setGroup(jsonRootNode.getStringValue("groupId"));
 		return player;
 	}
 	
@@ -207,7 +205,8 @@ public class PermissionsParser {
 			JsonObjectNodeBuilder plBuilder = JsonNodeBuilders.anObjectBuilder()
 					.withField("prefix", JsonNodeBuilders.aStringBuilder((pl.hasPrefix() ? pl.getPrefix() : "")))
 					.withField("permissions", permissions)
-					.withField("revokedPermissions", revokedPermissions);
+					.withField("revokedPermissions", revokedPermissions)
+					.withField("groupId",JsonNodeBuilders.aStringBuilder(pl.getGroupId()));
 			builder.withField(pl.getPlayerId(), plBuilder);
 		}
 		return builder.build();
