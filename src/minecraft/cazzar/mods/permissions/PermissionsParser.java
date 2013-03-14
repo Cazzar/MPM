@@ -67,6 +67,10 @@ public class PermissionsParser {
 		if(jsonRootNode.isArrayNode("revokedPermissions"))
 			for(JsonNode n : jsonRootNode.getArrayNode("revokedPermissions"))
 				group.addRevokedPermission(n.getText());
+		if (jsonRootNode.isStringValue("parentId"))
+			try {
+				group.setParent(jsonRootNode.getStringValue("parentId"));
+			} catch (Exception e) {}
 		return group;
 	}
 
@@ -134,6 +138,7 @@ public class PermissionsParser {
 					.withField("name", JsonNodeBuilders.aStringBuilder(gr.getGroupName()))
 					.withField("prefix", JsonNodeBuilders.aStringBuilder(gr.getPrefix()))
 					.withField("permissions", permissions)
+					.withField("parent", JsonNodeBuilders.aStringBuilder(gr.getParent()))
 					.withField("revokedPermissions", revokedPermissions);
 			builder.withField(gr.getGroupId(), grBuilder);
 		}
